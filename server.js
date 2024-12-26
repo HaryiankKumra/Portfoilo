@@ -10,8 +10,10 @@ app.use(cors()); // Allow requests from different origins
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Connect to MongoDB
+require('dotenv').config();
+
 mongoose
-  .connect('your-mongodb-connection-string', {
+  .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -21,6 +23,7 @@ mongoose
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error);
   });
+
 
 // Define a schema
 const contactSchema = new mongoose.Schema({
