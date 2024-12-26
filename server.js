@@ -2,13 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config();
+require('dotenv').config(); // To load environment variables from .env file
 
 const app = express();
 
 // Middleware
-app.use(cors({ origin: '*' })); // Allow all origins
-app.use(bodyParser.json());
+app.use(cors({
+  origin: 'http://127.0.0.1:5502', // Allow requests from your frontend (use your frontend's URL in production)
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
+}));
+app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Connect to MongoDB
 mongoose
@@ -23,7 +27,7 @@ mongoose
     console.error('Error connecting to MongoDB:', error);
   });
 
-// Define Schema and Model
+// Define schema and model
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -33,7 +37,7 @@ const contactSchema = new mongoose.Schema({
 
 const Contact = mongoose.model('Contact', contactSchema);
 
-// POST endpoint
+// POST endpoint to handle contact form submission
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 

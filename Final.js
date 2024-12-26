@@ -39,7 +39,11 @@ document.addEventListener("scroll", () => {
   const scrollPosition = window.scrollY;
   header.style.backgroundColor = scrollPosition > 250 ? "#29323c" : "transparent";
 });
-
+function initLoader() {
+    console.log('Initializing loader...');
+    document.body.classList.add('loaded');
+  }
+  
 // Chatbot Functionality
 const chatbotIcon = document.getElementById("chatbot-icon");
 const chatbotWindow = document.getElementById("chatbot-window");
@@ -205,9 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 //data store
-// Data store for contact form
+// Data Store for Contact Form
 document.querySelector('.form-container').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent form reload
   
     const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
     const email = document.querySelector('.form-field[placeholder="Email"]').value;
@@ -216,7 +220,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
     const formData = { name: fullName, email, message };
   
     try {
-      const response = await fetch('https://portfoilo-bay.vercel.app/api/contact', {
+      const response = await fetch('http://127.0.0.1:3000/api/contact', { // Update this to your backend URL in production
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +230,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   
       if (response.ok) {
         alert('Your message has been sent successfully!');
-        document.querySelector('.form-container').reset();
+        document.querySelector('.form-container').reset(); // Clear the form
       } else {
         const error = await response.json();
         alert(`Error: ${error.error}`);
