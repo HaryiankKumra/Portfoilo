@@ -1,5 +1,5 @@
 // Hamburger Menu Toggle
-const hamburger = document.querySelector(".hamburger");
+
 const mobileMenu = document.querySelector(".nav-list ul");
 const menuItems = document.querySelectorAll(".nav-list ul li a");
 const header = document.querySelector(".header.container");
@@ -220,7 +220,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
     const formData = { name: fullName, email, message };
   
     try {
-      const response = await fetch('http://127.0.0.1:3000/api/contact', { // Update this to your backend URL in production
+      const response = await fetch('http://127.0.0.1:3000', { // Update this to your backend URL in production
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
