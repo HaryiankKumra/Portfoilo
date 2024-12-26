@@ -216,7 +216,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
     const formData = { name: fullName, email: email, message };
   
     try {
-      const response = await fetch('http://localhost:3000/api/contact', {
+      const response = await fetch('https://portfoilo-bay.vercel.app', { // Use relative URL for Vercel deployment
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -236,4 +236,3 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
       alert('An error occurred. Please try again later.');
     }
   });
-  
