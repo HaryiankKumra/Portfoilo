@@ -1,17 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongoose = require('mongoose'); // Import Mongoose
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Allow requests from different origins
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(cors({ origin: '*' })); // Allow all origins
+app.use(bodyParser.json());
 
 // Connect to MongoDB
-require('dotenv').config();
-
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -24,8 +23,7 @@ mongoose
     console.error('Error connecting to MongoDB:', error);
   });
 
-
-// Define a schema
+// Define Schema and Model
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -33,20 +31,17 @@ const contactSchema = new mongoose.Schema({
   submittedAt: { type: Date, default: Date.now },
 });
 
-// Create a model
 const Contact = mongoose.model('Contact', contactSchema);
 
-// POST endpoint to receive contact form submissions
+// POST endpoint
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
-  // Validate input
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
-    // Save to MongoDB
     const contact = new Contact({ name, email, message });
     await contact.save();
     res.status(200).json({ message: 'Form submission saved to database!' });
@@ -57,7 +52,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -205,18 +205,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 //data store
+// Data store for contact form
 document.querySelector('.form-container').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent form reload
+    e.preventDefault();
   
-    // Get form data
     const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
     const email = document.querySelector('.form-field[placeholder="Email"]').value;
     const message = document.querySelector('.form-field[placeholder="Type your message..."]').value;
   
-    const formData = { name: fullName, email: email, message };
+    const formData = { name: fullName, email, message };
   
     try {
-      const response = await fetch('https://portfoilo-bay.vercel.app', { // Use relative URL for Vercel deployment
+      const response = await fetch('https://portfoilo-bay.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +226,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   
       if (response.ok) {
         alert('Your message has been sent successfully!');
-        document.querySelector('.form-container').reset(); // Clear the form
+        document.querySelector('.form-container').reset();
       } else {
         const error = await response.json();
         alert(`Error: ${error.error}`);
@@ -236,3 +236,5 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
       alert('An error occurred. Please try again later.');
     }
   });
+  
+  
