@@ -87,38 +87,27 @@ userInput?.addEventListener("keypress", (e) => {
 });
 
 async function getBotResponse(userMessage) {
-  const apiUrl = "https://api.openai.com/v1/chat/completions";
-  const apiKey = "your_openai_api_key_here"; // Replace with your OpenAI API key
-
-  const requestPayload = {
-    model: "gpt-3.5-turbo",
-    messages: [{ role: "user", content: userMessage }],
-    max_tokens: 150,
-  };
-
   try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify(requestPayload),
+    const response = await fetch('/api/chatbot', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: userMessage }),
     });
 
     const data = await response.json();
 
     if (data.error) {
-      console.error("Error:", data.error);
-      return "Sorry, there was an issue with the request.";
+      console.error('Chatbot error:', data.error);
+      return 'Sorry, I couldn’t process that.';
     }
 
-    return data.choices?.[0]?.message?.content?.trim() || "Sorry, I didn\'t get that.";
+    return data.reply;
   } catch (error) {
-    console.error("Error fetching bot response:", error);
-    return "Sorry, there was an error processing your request.";
+    console.error('Error:', error);
+    return 'Sorry, something went wrong.';
   }
 }
+
 
 // Projects Slider Functionality
 document.getElementById("next-btn")?.addEventListener("click", () => {
@@ -144,7 +133,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const loadProgress = (loadedImages / totalImages) * 4000;
 
             // Update the loader progress bar
-            const loaderProgress = document.querySelector(".loader-progress::before");
+            const loaderProgress = document.querySelector(".loader-progress");
+
             if (loaderProgress) {
                 loaderProgress.style.width = `${loadProgress}%`;
             }
