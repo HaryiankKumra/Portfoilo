@@ -1,3 +1,2 @@
 node_modules
 .env
-MONGO_URI=mongodb+srv://hkumrabe23:YourPasswordHere@cluster0.h6hsf.mongodb.net/YourDatabaseName?retryWrites=true&w=majority
