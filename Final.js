@@ -1,5 +1,5 @@
 // Hamburger Menu Toggle
-
+const hamburger = document.querySelector(".hamburger");
 const mobileMenu = document.querySelector(".nav-list ul");
 const menuItems = document.querySelectorAll(".nav-list ul li a");
 const header = document.querySelector(".header.container");
