@@ -57,8 +57,7 @@ chatbotIcon?.addEventListener("click", () => {
 
 const getBotResponse = async (userMessage) => {
   try {
-    
-    const response = await fetch(`${import.meta.env.BACKEND_BASEURL}/api/chatbot`, {
+    const response = await fetch('http://localhost:3000/api/chatbot', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -126,7 +125,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   const formData = { name: fullName, email, message };
 
   try {
-    const response = await fetch(`${import.meta.env.BACKEND_BASEURL}/api/contact`, {
+    const response = await fetch('http://localhost:3000/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -250,7 +249,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   const formData = { name: fullName, email, message };
 
   try {
-    const response = await fetch(`${import.meta.env.BACKEND_BASEURL}/api/contact`, {
+    const response = await fetch('http://localhost:3000/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
