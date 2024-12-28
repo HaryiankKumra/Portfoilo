@@ -11,7 +11,7 @@
     ],
     "functions": {
       "api/contact.js": {
-        "runtime": "nodejs@18",
+        "runtime": "nodejs@18.x",
         "includeFiles": "node_modules/**"
       }
     }
