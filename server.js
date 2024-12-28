@@ -2,21 +2,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); // To load environment variables from .env file
+require('dotenv').config(); // Load environment variables
+const fetch = require('node-fetch'); // Use regular require for node-fetch
 
 const app = express();
 
 // Middleware
-app.use(cors({
-  origin: 'http://127.0.0.1:5502', // Allow requests from your frontend (use your frontend's URL in production)
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type'],
-}));
+app.use(
+  cors({
+    origin: '*', // Allow requests from all origins (use specific URLs in production for better security)
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+  })
+);
 app.use(bodyParser.json()); // Parse JSON request bodies
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI)
-
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB successfully!');
   })
@@ -24,7 +26,7 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('Error connecting to MongoDB:', error);
   });
 
-// Define schema and model
+// Define schema and model for contact form submissions
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -34,7 +36,7 @@ const contactSchema = new mongoose.Schema({
 
 const Contact = mongoose.model('Contact', contactSchema);
 
-// POST endpoint to handle contact form submission
+// POST endpoint to handle contact form submissions
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -52,16 +54,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
-
-
-//chat bot
-const fetch = require('node-fetch');
-
+// Chatbot API route to handle messages and fetch responses from OpenAI API
 app.post('/api/chatbot', async (req, res) => {
   const { message } = req.body;
 
@@ -74,7 +67,7 @@ app.post('/api/chatbot', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Store your OpenAI API key in .env
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Store OpenAI API key in `.env`
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
@@ -95,4 +88,10 @@ app.post('/api/chatbot', async (req, res) => {
     console.error('Error fetching chatbot response:', error);
     res.status(500).json({ error: 'Failed to process your request' });
   }
+});
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
 });

@@ -198,37 +198,34 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-//data store
 // Data Store for Contact Form
 document.querySelector('.form-container').addEventListener('submit', async (e) => {
-    e.preventDefault(); // Prevent form reload
-  
-    const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
-    const email = document.querySelector('.form-field[placeholder="Email"]').value;
-    const message = document.querySelector('.form-field[placeholder="Type your message..."]').value;
-  
-    const formData = { name: fullName, email, message };
-  
-    try {
-      const response = await fetch('http://127.0.0.1:3000', { // Update this to your backend URL in production
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-  
-      if (response.ok) {
-        alert('Your message has been sent successfully!');
-        document.querySelector('.form-container').reset(); // Clear the form
-      } else {
-        const error = await response.json();
-        alert(`Error: ${error.error}`);
-      }
-    } catch (error) {
-      console.error('Error submitting the form:', error);
-      alert('An error occurred. Please try again later.');
+  e.preventDefault(); // Prevent form reload
+
+  const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
+  const email = document.querySelector('.form-field[placeholder="Email"]').value;
+  const message = document.querySelector('.form-field[placeholder="Type your message..."]').value;
+
+  const formData = { name: fullName, email, message };
+
+  try {
+    const response = await fetch('http://localhost:3000/api/contact', {  // Correct endpoint here
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      alert('Your message has been sent successfully!');
+      document.querySelector('.form-container').reset(); // Clear the form
+    } else {
+      const error = await response.json();
+      alert(`Error: ${error.error}`);
     }
-  });
-  
-  
+  } catch (error) {
+    console.error('Error submitting the form:', error);
+    alert('An error occurred. Please try again later.');
+  }
+});
