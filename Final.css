@@ -1043,3 +1043,61 @@ body.loaded .loading__wrapper {
 #chatbot-window .input-container button:hover {
   background-color: #0056b3;
 }
+
+
+.card__image video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the video fills the container without distortion */
+  border-radius: 10px 10px 0 0;
+}
+
+
+.box {
+	display: flex;
+}
+
+.box .inner {
+	width: 400px;
+	height: 50px;
+	line-height: 50px;
+	font-size: 4em;
+	font-family: sans-serif;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.box .inner:first-child {
+	background-color: indianred;
+	color: darkred;
+	transform-origin: right;
+	transform: perspective(100px) rotateY(-15deg);
+}
+
+.box .inner:last-child {
+	background-color: lightcoral;
+	color: antiquewhite;
+	transform-origin: left;
+	transform: perspective(100px) rotateY(15deg);
+}
+
+.box .inner span {
+	position: absolute;
+	animation: marquee 5s linear infinite;
+}
+
+.box .inner:first-child span {
+	animation-delay: 2.5s;
+	left: -100%;
+}
+
+@keyframes marquee {
+	from {
+		left: 100%;
+	}
+
+	to {
+		left: -100%;
+	}
+}
