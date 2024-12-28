@@ -1,6 +1,15 @@
-// api/contact.js
-import { connectToDatabase } from '../lib/mongodb'; // assuming a database connection utility
+import { connectToDatabase } from '../../lib/mongodb'; // assuming a database connection utility
+import mongoose from 'mongoose'; // ES Module syntax
 
+// Define schema and model
+const contactSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  message: { type: String, required: true },
+  submittedAt: { type: Date, default: Date.now },
+});
+
+const Contact = mongoose.model('Contact', contactSchema);
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
