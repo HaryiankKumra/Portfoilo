@@ -1,8 +1,5 @@
-import mongoose from 'mongoose';  // Correct import for Mongoose
-import { MongoClient } from 'mongodb';
-
-// Make sure your database connection utility file is correct.
-import { connectToDatabase } from '../lib/mongodb';
+import mongoose from 'mongoose'; // Correct import for Mongoose
+import { connectToDatabase } from '../../lib/mongodb'; // Assuming the connection function is in lib/mongodb
 
 // Define schema and model here
 const contactSchema = new mongoose.Schema({
@@ -23,7 +20,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Ensure database connection before saving
+      // Ensure the database connection is only established once per invocation
       await connectToDatabase();
 
       const contact = new Contact({ name, email, message });

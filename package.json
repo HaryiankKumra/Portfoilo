@@ -20,5 +20,12 @@
     "mongoose": "^8.9.2",
     "node-fetch": "^2.7.0",
     "mongodb": "^5.x.x" 
+  },
+  "vercel": {
+    "functions": {
+      "api/contact.js": {
+        "runtime": "vercel-node@18.x"
+      }
+    }
   }
 }
