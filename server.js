@@ -13,7 +13,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ['https://portfoilo-bay.vercel.app'], // Restrict to your frontend domain
+    origin: ['*'], // Restrict to your frontend domain
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type'],
   })
