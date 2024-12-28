@@ -13,11 +13,12 @@ app.use(bodyParser.json()); // Parse JSON request bodies
 // Correct CORS configuration
 app.use(
   cors({
-    origin: 'https://portfoilo-bay.vercel.app', // Only allow requests from your frontend URL
-    methods: ['GET', 'POST', 'OPTIONS'], // Allow specific methods
+    origin: ['https://portfoilo-8m3kjkjio-haryiankkumras-projects.vercel.app', 'https://portfoilo-bay.vercel.app'], // Allow both frontend and backend domains
+    methods: ['GET', 'POST', 'OPTIONS'], // Allow specific HTTP methods
     allowedHeaders: ['Content-Type'], // Allow specific headers
   })
 );
+
 
 // Connect to MongoDB
 mongoose
