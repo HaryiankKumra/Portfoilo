@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const loaderProgress = document.querySelector(".loader-progress");
 
             if (loaderProgress) {
-                loaderProgress.style.width = `${loadProgress}%`;
+              loaderProgress.style.width = `${loadProgress}%`;
             }
 
             // Hide loader once all images are loaded
