@@ -1,28 +1,28 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
-const fetch = require('node-fetch'); // Use regular require for node-fetch
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { connect, Schema, model } from 'mongoose';
+import dotenv from 'dotenv'; // Use default import for dotenv
+import fetch from 'node-fetch'; // Default import for node-fetch
+
+dotenv.config(); // Load environment variables
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.json()); // Parse JSON request bodies
 
-// Correct CORS configuration
+// CORS configuration
 app.use(
   cors({
-    origin: ['*'], // Allow both frontend and backend domains
+    origin: '*', // Allow all origins (can be modified for better security)
     methods: ['GET', 'POST'], // Allow specific HTTP methods
     allowedHeaders: ['Content-Type'], // Allow specific headers
   })
 );
 
-
 // Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB successfully!');
   })
@@ -31,24 +31,26 @@ mongoose
   });
 
 // Define schema and model for contact form submissions
-const contactSchema = new mongoose.Schema({
+const contactSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   message: { type: String, required: true },
   submittedAt: { type: Date, default: Date.now },
 });
 
-const Contact = mongoose.model('Contact', contactSchema);
+const Contact = model('Contact', contactSchema);
 
 // POST endpoint to handle contact form submissions
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
+  // Validate input fields
   if (!name || !email || !message) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
   try {
+    // Create a new contact form submission and save to the database
     const contact = new Contact({ name, email, message });
     await contact.save();
     res.status(200).json({ message: 'Form submission saved to database!' });
@@ -71,7 +73,7 @@ app.post('/api/chatbot', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Store OpenAI API key in `.env`
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
@@ -93,9 +95,6 @@ app.post('/api/chatbot', async (req, res) => {
     res.status(500).json({ error: 'Failed to process your request' });
   }
 });
-
-// Handle preflight requests for CORS
-app.options('*', cors());
 
 // Start the server
 const PORT = process.env.PORT || 3000;

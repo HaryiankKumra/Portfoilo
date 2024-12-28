@@ -55,11 +55,34 @@ chatbotIcon?.addEventListener("click", () => {
   chatbotWindow.style.display = chatbotWindow.style.display === "block" ? "none" : "block";
 });
 
-async function sendMessage() {
+const getBotResponse = async (userMessage) => {
+  try {
+    const response = await fetch('http://localhost:3000/api/chatbot', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('OpenAI API error:', data.error);
+      throw new Error('Error fetching OpenAI response');
+    }
+
+    return data.reply;
+  } catch (error) {
+    console.error('Error fetching chatbot response:', error);
+    throw new Error('Failed to process your request');
+  }
+};
+
+const sendMessage = async () => {
   const message = userInput.value.trim();
 
   if (message) {
-    // Display user message
     const userMessage = document.createElement("div");
     userMessage.classList.add("message");
     userMessage.textContent = `You: ${message}`;
@@ -67,46 +90,63 @@ async function sendMessage() {
 
     userInput.value = "";
 
-    // Get bot response
-    const botResponse = await getBotResponse(message);
+    try {
+      const botResponse = await getBotResponse(message);
 
-    // Display bot response
-    const botMessage = document.createElement("div");
-    botMessage.classList.add("message");
-    botMessage.textContent = `Bot: ${botResponse}`;
-    messagesContainer.appendChild(botMessage);
+      const botMessage = document.createElement("div");
+      botMessage.classList.add("message");
+      botMessage.textContent = `Bot: ${botResponse}`;
+      messagesContainer.appendChild(botMessage);
 
-    // Scroll to latest message
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    } catch (error) {
+      const botError = document.createElement("div");
+      botError.classList.add("message");
+      botError.textContent = "Bot: Sorry, I couldn't understand that.";
+      messagesContainer.appendChild(botError);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
   }
-}
+};
 
 sendButton?.addEventListener("click", sendMessage);
 userInput?.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-async function getBotResponse(userMessage) {
+// Data Store for Contact Form
+document.querySelector('.form-container').addEventListener('submit', async (e) => {
+  e.preventDefault(); // Prevent form reload
+
+  const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
+  const email = document.querySelector('.form-field[placeholder="Email"]').value;
+  const message = document.querySelector('.form-field[placeholder="Type your message..."]').value;
+
+  const formData = { name: fullName, email, message };
+
   try {
-    const response = await fetch('/api/chatbot', {
+    const response = await fetch('http://localhost:3000/api/contact', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: userMessage }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
     });
-
-    const data = await response.json();
-
-    if (data.error) {
-      console.error('Chatbot error:', data.error);
-      return 'Sorry, I couldn’t process that.';
+    
+    if (response.ok) {
+      const responseData = await response.json();
+      alert('Your message has been sent successfully!');
+      document.querySelector('.form-container').reset();
+    } else {
+      const error = await response.text();
+      alert(`Error: ${error}`);
     }
-
-    return data.reply;
   } catch (error) {
-    console.error('Error:', error);
-    return 'Sorry, something went wrong.';
+    console.error('Error submitting the form:', error);
+    alert('An error occurred. Please try again later.');
   }
-}
+});
+
 
 
 // Projects Slider Functionality
@@ -209,21 +249,25 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   const formData = { name: fullName, email, message };
 
   try {
-    const response = await fetch('https://portfoilo-bay.vercel.app/api/contact', {  // Corrected URL
+    const response = await fetch('http://localhost:3000/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     });
-
+    
     if (response.ok) {
+      // Try parsing JSON if response is successful
+      const responseData = await response.json();
       alert('Your message has been sent successfully!');
-      document.querySelector('.form-container').reset(); // Clear the form
+      document.querySelector('.form-container').reset();
     } else {
-      const error = await response.json();
-      alert(`Error: ${error.error}`);
+      // Handle failed response
+      const error = await response.text(); // Use text() to capture the raw response if JSON parsing fails
+      alert(`Error: ${error}`);
     }
+    
   } catch (error) {
     console.error('Error submitting the form:', error);
     alert('An error occurred. Please try again later.');
