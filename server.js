@@ -6,6 +6,7 @@ require('dotenv').config(); // Load environment variables
 const fetch = require('node-fetch'); // Use regular require for node-fetch
 
 const app = express();
+app.use(cors());
 
 // Middleware
 app.use(
