@@ -1,9 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
-const fetch = require('node-fetch');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import fetch from 'node-fetch';
+
+dotenv.config();  // Load environment variables from .env
 
 const app = express();
 
