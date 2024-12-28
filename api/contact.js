@@ -1,6 +1,6 @@
 // api/contact.js
-import { connectToDatabase } from '../../lib/mongodb'; // assuming a database connection utility
-import { Contact } from '../../models/Contact';  // assuming you have a contact model
+import { connectToDatabase } from '../lib/mongodb'; // assuming a database connection utility
+
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
