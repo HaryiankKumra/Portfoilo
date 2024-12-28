@@ -209,7 +209,7 @@ document.querySelector('.form-container').addEventListener('submit', async (e) =
   const formData = { name: fullName, email, message };
 
   try {
-    const response = await fetch('https://portfolio-bay.vercel.app/api/contact', {  // Corrected URL
+    const response = await fetch('https://portfoilo-bay.vercel.app/api/contact', {  // Corrected URL
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -6,20 +6,22 @@ require('dotenv').config(); // Load environment variables
 const fetch = require('node-fetch'); // Use regular require for node-fetch
 
 const app = express();
-app.use(cors());
 
 // Middleware
-app.use(
-  cors({
-    origin: '*', // Allow requests from all origins (use specific URLs in production for better security)
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-  })
-);
 app.use(bodyParser.json()); // Parse JSON request bodies
 
+// Correct CORS configuration
+app.use(
+  cors({
+    origin: 'https://portfoilo-bay.vercel.app', // Only allow requests from your frontend URL
+    methods: ['GET', 'POST', 'OPTIONS'], // Allow specific methods
+    allowedHeaders: ['Content-Type'], // Allow specific headers
+  })
+);
+
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB successfully!');
   })
@@ -90,6 +92,9 @@ app.post('/api/chatbot', async (req, res) => {
     res.status(500).json({ error: 'Failed to process your request' });
   }
 });
+
+// Handle preflight requests for CORS
+app.options('*', cors());
 
 // Start the server
 const PORT = process.env.PORT || 3000;
