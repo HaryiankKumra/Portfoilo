@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';  // Correct import for Mongoose
+import { MongoClient } from 'mongodb';
 
 // Make sure your database connection utility file is correct.
 import { connectToDatabase } from '../lib/mongodb';
