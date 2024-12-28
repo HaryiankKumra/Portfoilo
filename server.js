@@ -2,27 +2,27 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
-require('dotenv').config(); // Load environment variables
-const fetch = require('node-fetch'); // Use regular require for node-fetch
+require('dotenv').config();
+const fetch = require('node-fetch');
 
 const app = express();
 
 // Middleware
-app.use(bodyParser.json()); // Parse JSON request bodies
-
-// Correct CORS configuration
+app.use(bodyParser.json());
 app.use(
   cors({
-    origin: ['*'], // Allow both frontend and backend domains
-    methods: ['GET', 'POST'], // Allow specific HTTP methods
-    allowedHeaders: ['Content-Type'], // Allow specific headers
+    origin: ['https://portfoilo-bay.vercel.app'], // Restrict to your frontend domain
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
   })
 );
 
-
 // Connect to MongoDB
 mongoose
-  .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log('Connected to MongoDB successfully!');
   })
@@ -30,17 +30,7 @@ mongoose
     console.error('Error connecting to MongoDB:', error);
   });
 
-// Define schema and model for contact form submissions
-const contactSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true },
-  message: { type: String, required: true },
-  submittedAt: { type: Date, default: Date.now },
-});
-
-const Contact = mongoose.model('Contact', contactSchema);
-
-// POST endpoint to handle contact form submissions
+// Contact Form API
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -49,7 +39,13 @@ app.post('/api/contact', async (req, res) => {
   }
 
   try {
-    const contact = new Contact({ name, email, message });
+    const contact = new mongoose.model('Contact', {
+      name: { type: String, required: true },
+      email: { type: String, required: true },
+      message: { type: String, required: true },
+      submittedAt: { type: Date, default: Date.now },
+    })({ name, email, message });
+
     await contact.save();
     res.status(200).json({ message: 'Form submission saved to database!' });
   } catch (error) {
@@ -58,7 +54,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// Chatbot API route to handle messages and fetch responses from OpenAI API
+// Chatbot API
 app.post('/api/chatbot', async (req, res) => {
   const { message } = req.body;
 
@@ -71,7 +67,7 @@ app.post('/api/chatbot', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, // Store OpenAI API key in `.env`
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: 'gpt-3.5-turbo',
@@ -93,9 +89,6 @@ app.post('/api/chatbot', async (req, res) => {
     res.status(500).json({ error: 'Failed to process your request' });
   }
 });
-
-// Handle preflight requests for CORS
-app.options('*', cors());
 
 // Start the server
 const PORT = process.env.PORT || 3000;

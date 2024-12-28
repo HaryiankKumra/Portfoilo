@@ -1,7 +1,6 @@
-import mongoose from 'mongoose'; // Correct import for Mongoose
-import { connectToDatabase } from '../../lib/mongodb'; // Assuming the connection function is in lib/mongodb
+import mongoose from 'mongoose';
+import { connectToDatabase } from '../../lib/mongodb';
 
-// Define schema and model here
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -9,28 +8,26 @@ const contactSchema = new mongoose.Schema({
   submittedAt: { type: Date, default: Date.now },
 });
 
-const Contact = mongoose.model('Contact', contactSchema);
+let Contact = mongoose.models.Contact || mongoose.model('Contact', contactSchema);
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { name, email, message } = req.body;
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
 
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'All fields are required' });
-    }
+  const { name, email, message } = req.body;
 
-    try {
-      // Ensure the database connection is only established once per invocation
-      await connectToDatabase();
+  if (!name || !email || !message) {
+    return res.status(400).json({ error: 'All fields are required' });
+  }
 
-      const contact = new Contact({ name, email, message });
-      await contact.save();
-      res.status(200).json({ message: 'Form submission saved to database!' });
-    } catch (error) {
-      console.error('Error saving to database:', error);
-      res.status(500).json({ error: 'Failed to save to database' });
-    }
-  } else {
-    res.status(405).json({ error: 'Method Not Allowed' });
+  try {
+    await connectToDatabase();
+    const contact = new Contact({ name, email, message });
+    await contact.save();
+    res.status(200).json({ message: 'Form submission saved to database!' });
+  } catch (error) {
+    console.error('Error saving to database:', error);
+    res.status(500).json({ error: 'Failed to save to database' });
   }
 }
