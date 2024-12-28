@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import { connect, Schema, model } from 'mongoose';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -10,7 +9,7 @@ dotenv.config(); // Load environment variables
 const app = express();
 
 // Middleware
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(express.json()); // Parse JSON request bodies
 
 // CORS configuration
 app.use(
@@ -100,3 +99,6 @@ app.post('/api/chatbot', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server listening on port ${port}`));
+// Instead of module.exports = app;
+export default app;
+

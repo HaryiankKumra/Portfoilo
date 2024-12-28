@@ -1,8 +1,3 @@
-// Base URL Setup
-const BASE_URL = import.meta.env.MODE === 'development'
-  ? 'http://localhost:3000'
-  : 'https://your-production-url.com';
-
 // Hamburger Menu Toggle
 const hamburger = document.querySelector(".hamburger");
 const mobileMenu = document.querySelector(".nav-list ul");
@@ -44,7 +39,11 @@ document.addEventListener("scroll", () => {
   const scrollPosition = window.scrollY;
   header.style.backgroundColor = scrollPosition > 250 ? "#29323c" : "transparent";
 });
-
+function initLoader() {
+    console.log('Initializing loader...');
+    document.body.classList.add('loaded');
+  }
+  
 // Chatbot Functionality
 const chatbotIcon = document.getElementById("chatbot-icon");
 const chatbotWindow = document.getElementById("chatbot-window");
@@ -58,7 +57,7 @@ chatbotIcon?.addEventListener("click", () => {
 
 const getBotResponse = async (userMessage) => {
   try {
-    const response = await fetch(`${BASE_URL}/api/chatbot`, {
+    const response = await fetch('http://localhost:3000/api/chatbot', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -116,7 +115,7 @@ userInput?.addEventListener("keypress", (e) => {
 });
 
 // Data Store for Contact Form
-document.querySelector('.form-container')?.addEventListener('submit', async (e) => {
+document.querySelector('.form-container').addEventListener('submit', async (e) => {
   e.preventDefault(); // Prevent form reload
 
   const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
@@ -126,14 +125,14 @@ document.querySelector('.form-container')?.addEventListener('submit', async (e) 
   const formData = { name: fullName, email, message };
 
   try {
-    const response = await fetch(`${BASE_URL}/api/contact`, {
+    const response = await fetch('http://localhost:3000/api/contact', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(formData),
     });
-
+    
     if (response.ok) {
       const responseData = await response.json();
       alert('Your message has been sent successfully!');
@@ -148,6 +147,8 @@ document.querySelector('.form-container')?.addEventListener('submit', async (e) 
   }
 });
 
+
+
 // Projects Slider Functionality
 document.getElementById("next-btn")?.addEventListener("click", () => {
   const container = document.querySelector(".projects-slider-container");
@@ -161,34 +162,39 @@ document.getElementById("prev-btn")?.addEventListener("click", () => {
 
 // Loader Functionality
 document.addEventListener("DOMContentLoaded", () => {
-  const images = document.querySelectorAll("img");
-  const totalImages = images.length;
-  let loadedImages = 1;
+    // Wait for all images to load
+    const images = document.querySelectorAll("img");
+    const totalImages = images.length;
+    let loadedImages = 1;
 
-  images.forEach((img) => {
-    img.addEventListener("load", () => {
-      loadedImages++;
-      const loadProgress = (loadedImages / totalImages) * 4000;
+    images.forEach((img) => {
+        img.addEventListener("load", () => {
+            loadedImages++;
+            const loadProgress = (loadedImages / totalImages) * 4000;
 
-      const loaderProgress = document.querySelector(".loader-progress");
+            // Update the loader progress bar
+            const loaderProgress = document.querySelector(".loader-progress");
 
-      if (loaderProgress) {
-        loaderProgress.style.width = `${loadProgress}%`;
-      }
+            if (loaderProgress) {
+              loaderProgress.style.width = `${loadProgress}%`;
+            }
 
-      if (loadedImages === totalImages) {
-        document.body.classList.add("loaded");
-      }
+            // Hide loader once all images are loaded
+            if (loadedImages === totalImages) {
+                document.body.classList.add("loaded");
+            }
+        });
+
+        // Fallback for cached images
+        if (img.complete) {
+            img.dispatchEvent(new Event("load"));
+        }
     });
 
-    if (img.complete) {
-      img.dispatchEvent(new Event("load"));
-    }
-  });
-
-  setTimeout(() => {
-    document.body.classList.add("loaded");
-  }, 5000);
+    // Fallback timeout if images fail to load
+    setTimeout(() => {
+        document.body.classList.add("loaded");
+    }, 5000); // Maximum wait time of 5 seconds
 });
 
 // Slider Functionality
@@ -229,4 +235,41 @@ function initSlider() {
 
 document.addEventListener("DOMContentLoaded", () => {
   initLoader();
+});
+
+
+// Data Store for Contact Form
+document.querySelector('.form-container').addEventListener('submit', async (e) => {
+  e.preventDefault(); // Prevent form reload
+
+  const fullName = document.querySelector('.form-field[placeholder="Full Name"]').value;
+  const email = document.querySelector('.form-field[placeholder="Email"]').value;
+  const message = document.querySelector('.form-field[placeholder="Type your message..."]').value;
+
+  const formData = { name: fullName, email, message };
+
+  try {
+    const response = await fetch('http://localhost:3000/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+    
+    if (response.ok) {
+      // Try parsing JSON if response is successful
+      const responseData = await response.json();
+      alert('Your message has been sent successfully!');
+      document.querySelector('.form-container').reset();
+    } else {
+      // Handle failed response
+      const error = await response.text(); // Use text() to capture the raw response if JSON parsing fails
+      alert(`Error: ${error}`);
+    }
+    
+  } catch (error) {
+    console.error('Error submitting the form:', error);
+    alert('An error occurred. Please try again later.');
+  }
 });
