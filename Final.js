@@ -68,8 +68,8 @@ const getBotResponse = async (userMessage) => {
     const data = await response.json();
 
     if (data.error) {
-      console.error('OpenAI API error:', data.error);
-      throw new Error('Error fetching OpenAI response');
+      console.error('Gemini API error:', data.error);
+      throw new Error('Error fetching Gemini response');
     }
 
     return data.reply;
