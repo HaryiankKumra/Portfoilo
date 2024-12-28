@@ -1,7 +1,9 @@
-import { connectToDatabase } from '../../lib/mongodb'; // assuming a database connection utility
-import mongoose from 'mongoose'; // ES Module syntax
+import mongoose from 'mongoose';  // Correct import for Mongoose
 
-// Define schema and model
+// Make sure your database connection utility file is correct.
+import { connectToDatabase } from '../lib/mongodb';
+
+// Define schema and model here
 const contactSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
@@ -20,9 +22,9 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Connect to the database
+      // Ensure database connection before saving
       await connectToDatabase();
-      
+
       const contact = new Contact({ name, email, message });
       await contact.save();
       res.status(200).json({ message: 'Form submission saved to database!' });
