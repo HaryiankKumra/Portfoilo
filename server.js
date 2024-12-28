@@ -2,8 +2,8 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import { connect, Schema, model } from 'mongoose';
-import dotenv from 'dotenv'; // Use default import for dotenv
-import fetch from 'node-fetch'; // Default import for node-fetch
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import dotenv from 'dotenv'; // Import dotenv only once
 
 dotenv.config(); // Load environment variables
 
@@ -61,6 +61,16 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // Chatbot API route to handle messages and fetch responses from OpenAI API
+const geminiApiKey = process.env.GEMINI_API_KEY;
+
+// Check if API key is present before starting the server
+if (!geminiApiKey) {
+  console.error('Error: Missing GEMINI_API_KEY environment variable.');
+  process.exit(1);
+}
+
+const genAI = new GoogleGenerativeAI(geminiApiKey);
+
 app.post('/api/chatbot', async (req, res) => {
   const { message } = req.body;
 
@@ -69,35 +79,24 @@ app.post('/api/chatbot', async (req, res) => {
   }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: message }],
-        max_tokens: 150,
-      }),
-    });
+    // Select a suitable Gemini model for chatbot interactions
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }); // Adjust model name as needed
 
-    const data = await response.json();
+    const prompt = {
+      // Craft a clear prompt for generating chatbot responses
+      text: `Respond to the user's message in a conversational manner:\n${message}`,
+      // Consider adding additional context or instructions if necessary
+    };
 
-    if (data.error) {
-      console.error('OpenAI API error:', data.error);
-      return res.status(500).json({ error: 'Failed to fetch OpenAI response' });
-    }
+    const response = await model.generateContent(prompt);
+    const generatedText = response.response.text();
 
-    res.status(200).json({ reply: data.choices[0].message.content });
+    res.status(200).json({ reply: generatedText });
   } catch (error) {
     console.error('Error fetching chatbot response:', error);
     res.status(500).json({ error: 'Failed to process your request' });
   }
 });
 
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server listening on port ${port}`));
