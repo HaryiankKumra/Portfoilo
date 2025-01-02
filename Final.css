@@ -763,13 +763,13 @@ body.loaded .loading__wrapper {
 
 /* contact section */
 #contact .acontainer {
-  background: url('./assets/images/img-1.png') no-repeat center center/cover; /* Update with your image path */
+  background: url('https://png.pngtree.com/thumb_back/fh260/background/20201101/pngtree-scene-with-geometrical-forms-the-poster-model-minimal-background-render-image_452981.jpg');
   background-size: cover;
 	background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   justify-content: center;
   align-items: flex-start;
   max-width:fit-content;
@@ -821,7 +821,7 @@ body.loaded .loading__wrapper {
 }
 
 #contact .contact-info-title {
-  color: #01bdd4;
+  /* color: #01bdd4; */
   font-weight: bold;
   font-size: 1.5rem;
 }
